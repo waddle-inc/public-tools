@@ -1,0 +1,25 @@
+# dependencies / lockfiles
+node_modules
+pnpm-lock.yaml
+.pnpm-store
+
+# build artifacts
+dist
+build
+coverage
+apps/web/dist
+
+# python environments and caches
+.venv
+apps/api/.venv
+.pytest_cache
+__pycache__
+
+# git / editor / agent runtime configs
+.git
+.cursor
+.claude
+
+apps/web/src/lib/api.types.ts
+apps/web/src/lib/auth-api.types.ts
+docs/api/openapi.json

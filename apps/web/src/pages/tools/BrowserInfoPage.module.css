@@ -1,0 +1,181 @@
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 1.25rem;
+  font-size: 11px;
+  letter-spacing: 0.5px;
+  color: #8a96aa;
+}
+
+.breadcrumbLink {
+  color: #3a5298;
+  text-decoration: none;
+}
+
+.breadcrumbLink:hover {
+  text-decoration: underline;
+}
+
+.breadcrumbSep {
+  color: #ccd0dc;
+}
+
+.pageTitle {
+  margin: 0 0 0.25rem;
+  font-family: 'Tinos', serif;
+  font-size: 24px;
+  font-weight: 400;
+  letter-spacing: -0.5px;
+  color: #1e2a3a;
+}
+
+.pageSubtitle {
+  margin: 0 0 1.75rem;
+  font-family: 'Tinos', serif;
+  font-size: 13px;
+  font-style: italic;
+  color: #8a96aa;
+}
+
+.sectionHeading {
+  margin: 1.5rem 0 0;
+  padding-bottom: 0.5rem;
+  border-bottom: 0.5px solid #dde1ec;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: #8a96aa;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 0.25rem;
+}
+
+.tableRow {
+  border-bottom: 0.5px solid #edf0f8;
+}
+
+.tableRow:last-child {
+  border-bottom: none;
+}
+
+.th {
+  width: 220px;
+  padding: 0.625rem 1rem 0.625rem 0;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1.55;
+  text-align: left;
+  white-space: nowrap;
+  vertical-align: top;
+  color: #5a6a82;
+}
+
+.td {
+  padding: 0.625rem 0;
+  font-size: 12px;
+  line-height: 1.55;
+  word-break: break-all;
+  color: #1e2a3a;
+}
+
+.badgeSuccess,
+.badgeNeutral,
+.badgeError {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 20px;
+  padding: 0 7px;
+  border-radius: 2px;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  vertical-align: middle;
+}
+
+.badgeSuccess {
+  background: #e8f2ea;
+  color: #2a6030;
+}
+
+.badgeNeutral {
+  background: #edf0f8;
+  color: #3a4a6a;
+}
+
+.badgeError {
+  border: 0.5px solid #e0c8c8;
+  background: #fdf0f0;
+  color: #8a2020;
+}
+
+.loadingRoot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 3.5rem 2rem;
+}
+
+.spinnerLg {
+  width: 40px;
+  height: 40px;
+  border: 3px solid #dde1ec;
+  border-top-color: #3a5298;
+  border-radius: 50%;
+  animation: spin 0.9s linear infinite;
+}
+
+.loadingLabel {
+  margin: 0;
+  font-size: 12px;
+  letter-spacing: 0.5px;
+  color: #8a96aa;
+}
+
+.errorBanner {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-bottom: 1.5rem;
+  padding: 0.75rem 1rem;
+  border: 0.5px solid #e0c8c8;
+  border-radius: 2px;
+  background: #fdf0f0;
+  font-size: 12px;
+  line-height: 1.6;
+  color: #6a2020;
+}
+
+.errorBannerEm {
+  font-family: 'Tinos', serif;
+  font-style: italic;
+}
+
+.reloginLink {
+  display: inline-flex;
+  align-items: center;
+  height: 40px;
+  padding: 0 1.5rem;
+  border-radius: 2px;
+  background: #3a5298;
+  color: #eef1fa;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 1.1px;
+  text-transform: uppercase;
+  text-decoration: none;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

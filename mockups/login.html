@@ -1,0 +1,412 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Waddle Tools — ログイン（状態カタログ）</title>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&family=Tinos:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: 'DM Sans', sans-serif;
+        /* 認証: #f4f6f0（緑みがかったクリーム）→ Tools: #f0f2f7（青みがかったグレー） */
+        background: #f0f2f7;
+        padding: 2.5rem 1.5rem 3rem;
+        /* 認証: #2d3a20（ダークグリーン）→ Tools: #1e2a3a（ダークネイビー） */
+        color: #1e2a3a;
+      }
+
+      /* ── 状態ラベル ── */
+      .wdl-state-label {
+        font-size: 11px;
+        font-weight: 500;
+        /* 認証: #9aaa8a → Tools: #8a96aa */
+        color: #8a96aa;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        text-align: center;
+        margin-bottom: 0.875rem;
+      }
+
+      /* ── レイアウト ── */
+      .wdl-catalog {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+        gap: 2rem;
+        align-items: start;
+        max-width: 1300px;
+        margin: 0 auto;
+      }
+
+      .wdl-root {
+        display: flex;
+        align-items: flex-start;
+        justify-content: center;
+      }
+
+      /* ── カード ── */
+      .a-card {
+        /* 認証: #fffdf7（温かみのあるクリーム）→ Tools: #f8f9fc（クールホワイト） */
+        background: #f8f9fc;
+        /* 認証: #d8dccf → Tools: #ccd0dc */
+        border: 0.5px solid #ccd0dc;
+        border-radius: 4px;
+        padding: 2rem 2.25rem 2.25rem;
+        width: 100%;
+        max-width: 440px;
+        position: relative;
+      }
+
+      /* ── メタ行 ── */
+      .a-meta {
+        display: flex;
+        justify-content: space-between;
+        font-size: 10px;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        /* 認証: #9aaa8a → Tools: #8a96aa */
+        color: #8a96aa;
+        padding-bottom: 0.875rem;
+        /* 認証: #e2e8d8 → Tools: #dde1ec */
+        border-bottom: 0.5px solid #dde1ec;
+        margin-bottom: 1.5rem;
+      }
+
+      /* ── マストヘッド ── */
+      .a-masthead {
+        text-align: center;
+        margin-bottom: 1.5rem;
+      }
+      .a-masthead-logo {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 0.875rem;
+      }
+      .a-masthead-logo img {
+        width: 36px;
+        height: 36px;
+        /* 認証: #edf2e6（緑みアイコン背景）→ Tools: #e8ecf5（青みアイコン背景） */
+        background: #e8ecf5;
+        border-radius: 50%;
+        padding: 4px;
+      }
+      .a-masthead-name {
+        font-family: 'Tinos', serif;
+        font-size: 36px;
+        font-style: italic;
+        font-weight: 400;
+        letter-spacing: -1px;
+        /* 認証: #2d3a20 → Tools: #1e2a3a */
+        color: #1e2a3a;
+      }
+
+      /* ── 見出し ── */
+      .a-headline {
+        font-family: 'Tinos', serif;
+        font-size: 26px;
+        line-height: 1.15;
+        font-weight: 400;
+        margin: 0;
+        letter-spacing: -0.5px;
+        color: #1e2a3a;
+      }
+      .a-subhead {
+        font-family: 'Tinos', serif;
+        font-size: 13px;
+        font-style: italic;
+        /* 認証: #7a8a6a → Tools: #5a6a82 */
+        color: #5a6a82;
+        margin-top: 0.4rem;
+        line-height: 1.5;
+      }
+
+      /* ── 本文 ── */
+      .a-body {
+        font-size: 13px;
+        color: #5a6a82;
+        line-height: 1.75;
+        text-align: center;
+        margin: 0 0 1.5rem;
+      }
+
+      /* ── 罫線 ── */
+      .a-rule-double {
+        border: none;
+        /* 認証: #2d3a20 → Tools: #1e2a3a */
+        border-top: 0.5px solid #1e2a3a;
+        height: 4px;
+        border-bottom: 0.5px solid #1e2a3a;
+        margin: 1.5rem 0;
+      }
+      .a-rule-light {
+        border: none;
+        border-top: 0.5px solid #dde1ec;
+        margin: 1.5rem 0;
+      }
+
+      /* ── ボタン ── */
+      .wdl-btn-primary {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        width: 100%;
+        height: 46px;
+        /* 認証: #4a6830（フォレストグリーン）→ Tools: #3a5298（インディゴ） */
+        background: #3a5298;
+        color: #eef1fa;
+        border: none;
+        border-radius: 2px;
+        font-family: 'DM Sans', sans-serif;
+        font-size: 13px;
+        font-weight: 500;
+        cursor: pointer;
+        letter-spacing: 1.2px;
+        text-transform: uppercase;
+        text-decoration: none;
+        transition:
+          background 0.15s,
+          transform 0.1s;
+      }
+      .wdl-btn-primary:hover {
+        /* 認証: #3d5828 → Tools: #2e4280 */
+        background: #2e4280;
+      }
+      .wdl-btn-primary:active {
+        transform: scale(0.985);
+      }
+      .wdl-btn-primary.is-loading {
+        /* 認証: #7a9a5a → Tools: #6a82b8 */
+        background: #6a82b8;
+        cursor: not-allowed;
+        pointer-events: none;
+      }
+      .wdl-btn-primary.is-disabled {
+        /* 認証: #b0bca0 → Tools: #a0aac0 */
+        background: #a0aac0;
+        cursor: not-allowed;
+        pointer-events: none;
+      }
+
+      /* ── スピナー ── */
+      .wdl-spinner {
+        width: 14px;
+        height: 14px;
+        border: 2px solid rgba(255, 255, 255, 0.4);
+        border-top-color: #fff;
+        border-radius: 50%;
+        animation: wdl-spin 0.8s linear infinite;
+        flex-shrink: 0;
+      }
+      @keyframes wdl-spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      /* ── インフォバナー ── */
+      .wdl-info-banner {
+        /* 認証: #f0f5e8（緑みバナー）→ Tools: #edf0f8（青みバナー） */
+        background: #edf0f8;
+        border: 0.5px solid #c0c8de;
+        border-radius: 2px;
+        padding: 0.75rem 1rem;
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: flex-start;
+        gap: 8px;
+        font-size: 12px;
+        /* 認証: #3a5020 → Tools: #283870 */
+        color: #283870;
+        line-height: 1.6;
+      }
+      .wdl-info-banner em {
+        font-family: 'Tinos', serif;
+        font-style: italic;
+      }
+
+      /* ── copyright ── */
+      .wdl-copyright {
+        margin-top: 1.5rem;
+        text-align: center;
+        font-size: 10px;
+        /* 認証: #b0bca0 → Tools: #a0aac0 */
+        color: #a0aac0;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wdl-catalog">
+      <!-- ═══════════════════════════ STATE 1: 初期状態 ════════════════════════════ -->
+      <div>
+        <p class="wdl-state-label">初期状態</p>
+        <div class="wdl-root">
+          <div class="a-card">
+            <div class="a-meta">
+              <span>Tools</span>
+            </div>
+            <div class="a-masthead">
+              <div class="a-masthead-logo">
+                <img src="company-logo.png" alt="" />
+                <span class="a-masthead-name">Waddle</span>
+              </div>
+            </div>
+            <hr class="a-rule-double" />
+            <div style="text-align: center; margin-bottom: 1.5rem">
+              <h1 class="a-headline">ようこそ</h1>
+              <p class="a-subhead">
+                ツールサービスへアクセスするには<br />
+                ログインしてください。
+              </p>
+            </div>
+            <hr class="a-rule-light" />
+            <p class="a-body">
+              認証システムへ移動してログインします。<br />
+              完了後、このページへ自動的に戻ります。
+            </p>
+            <a class="wdl-btn-primary" href="#">ログインする →</a>
+            <div class="wdl-copyright">© 2026 Waddle Inc.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════ STATE 2: 遷移中 ════════════════════════════ -->
+      <div>
+        <p class="wdl-state-label">遷移中（リンク押下後）</p>
+        <div class="wdl-root">
+          <div class="a-card">
+            <div class="a-meta">
+              <span>Tools</span>
+            </div>
+            <div class="a-masthead">
+              <div class="a-masthead-logo">
+                <img src="company-logo.png" alt="" />
+                <span class="a-masthead-name">Waddle</span>
+              </div>
+            </div>
+            <hr class="a-rule-double" />
+            <div style="text-align: center; margin-bottom: 1.5rem">
+              <h1 class="a-headline">ようこそ</h1>
+              <p class="a-subhead">
+                ツールサービスへアクセスするには<br />
+                ログインしてください。
+              </p>
+            </div>
+            <hr class="a-rule-light" />
+            <p class="a-body">
+              認証システムへ移動してログインします。<br />
+              完了後、このページへ自動的に戻ります。
+            </p>
+            <a class="wdl-btn-primary is-loading" href="#">
+              <div class="wdl-spinner"></div>
+              認証ページへ移動中...
+            </a>
+            <div class="wdl-copyright">© 2026 Waddle Inc.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════ STATE 3: ログアウト後 ════════════════════════════ -->
+      <div>
+        <p class="wdl-state-label">ログアウト後</p>
+        <div class="wdl-root">
+          <div class="a-card">
+            <div class="a-meta">
+              <span>Tools</span>
+            </div>
+            <div class="a-masthead">
+              <div class="a-masthead-logo">
+                <img src="company-logo.png" alt="" />
+                <span class="a-masthead-name">Waddle</span>
+              </div>
+            </div>
+            <hr class="a-rule-double" />
+            <div style="text-align: center; margin-bottom: 1.5rem">
+              <h1 class="a-headline">ようこそ</h1>
+              <p class="a-subhead">
+                ツールサービスへアクセスするには<br />
+                ログインしてください。
+              </p>
+            </div>
+            <hr class="a-rule-light" />
+            <div class="wdl-info-banner">
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 16 16"
+                fill="none"
+                style="flex-shrink: 0; margin-top: 1px"
+              >
+                <circle
+                  cx="8"
+                  cy="8"
+                  r="7"
+                  stroke="#3a5298"
+                  stroke-width="1.2"
+                />
+                <path
+                  d="M8 7v4"
+                  stroke="#3a5298"
+                  stroke-width="1.3"
+                  stroke-linecap="round"
+                />
+                <circle cx="8" cy="5" r="0.8" fill="#3a5298" />
+              </svg>
+              <span
+                ><em>ログアウト完了 —</em>
+                再度ログインしてご利用ください。</span
+              >
+            </div>
+            <p class="a-body" style="margin-bottom: 1.5rem">
+              認証システムへ移動してログインします。<br />
+              完了後、このページへ自動的に戻ります。
+            </p>
+            <a class="wdl-btn-primary" href="#">ログインする →</a>
+            <div class="wdl-copyright">© 2026 Waddle Inc.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════ STATE 4: 認証済みリダイレクト中 ════════════════════════════ -->
+      <div>
+        <p class="wdl-state-label">認証済み（/ へリダイレクト中）</p>
+        <div class="wdl-root">
+          <div class="a-card">
+            <div class="a-meta">
+              <span>Tools</span>
+            </div>
+            <div class="a-masthead">
+              <div class="a-masthead-logo">
+                <img src="company-logo.png" alt="" />
+                <span class="a-masthead-name">Waddle</span>
+              </div>
+            </div>
+            <hr class="a-rule-double" />
+            <div style="text-align: center; margin-bottom: 1.5rem">
+              <h1 class="a-headline">ようこそ</h1>
+              <p class="a-subhead">
+                ツールサービスへアクセスするには<br />
+                ログインしてください。
+              </p>
+            </div>
+            <hr class="a-rule-light" />
+            <p class="a-body">認証済みです。ダッシュボードへ移動します...</p>
+            <a class="wdl-btn-primary is-disabled" href="#">
+              <div class="wdl-spinner"></div>
+              移動中...
+            </a>
+            <div class="wdl-copyright">© 2026 Waddle Inc.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

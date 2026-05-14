@@ -1,0 +1,20 @@
+{
+  "name": "tools",
+  "private": true,
+  "packageManager": "pnpm@10.33.0",
+  "scripts": {
+    "dev": "concurrently -k -n web,api -c blue,magenta \"pnpm --filter web dev\" \"uv run --directory apps/api uvicorn --app-dir src app.main:app --reload --host 0.0.0.0 --port 8001\"",
+    "dev:web": "pnpm --filter web dev",
+    "dev:api": "uv run --directory apps/api uvicorn --app-dir src app.main:app --reload --host 0.0.0.0 --port 8001",
+    "format": "prettier --write .",
+    "build": "pnpm --filter web build",
+    "lint": "pnpm --filter web lint",
+    "lint-fix": "pnpm --filter web lint-fix",
+    "toc": "find docs -name '*.md' -exec grep -ql '<!-- toc -->' {} \\; -exec markdown-toc -i --bullets=- {} \\;"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1",
+    "markdown-toc": "^1.2.0",
+    "prettier": "^3.8.3"
+  }
+}

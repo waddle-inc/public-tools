@@ -1,0 +1,393 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Waddle Tools — 文章要約（状態カタログ）</title>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&family=Tinos:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: 'DM Sans', sans-serif;
+        background: #f0f2f7;
+        padding: 2.5rem 1.5rem 3rem;
+        color: #1e2a3a;
+      }
+
+      .wdl-state-label {
+        font-size: 11px;
+        font-weight: 500;
+        color: #8a96aa;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        text-align: center;
+        margin-bottom: 0.875rem;
+      }
+
+      .wdl-catalog {
+        display: flex;
+        flex-direction: column;
+        gap: 3rem;
+        max-width: 960px;
+        margin: 0 auto;
+      }
+
+      .wdl-page-frame {
+        background: #f8f9fc;
+        border: 0.5px solid #ccd0dc;
+        border-radius: 4px;
+        overflow: hidden;
+      }
+
+      .t-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0.875rem 2rem;
+        border-bottom: 0.5px solid #dde1ec;
+        background: #f8f9fc;
+      }
+
+      .t-header-logo {
+        display: flex;
+        align-items: baseline;
+        gap: 8px;
+      }
+
+      .t-header-wordmark {
+        font-family: 'Tinos', serif;
+        font-size: 22px;
+        font-style: italic;
+        font-weight: 400;
+        letter-spacing: -0.5px;
+        color: #1e2a3a;
+      }
+
+      .t-header-tag {
+        font-size: 10px;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        color: #8a96aa;
+      }
+
+      .t-header-actions {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        font-size: 12px;
+        color: #5a6a82;
+      }
+
+      .t-main {
+        padding: 2rem 2rem 2.5rem;
+      }
+
+      .t-breadcrumb {
+        font-size: 11px;
+        color: #8a96aa;
+        margin-bottom: 1.25rem;
+      }
+
+      .t-breadcrumb a {
+        color: #3a5298;
+        text-decoration: none;
+      }
+
+      .t-page-title {
+        margin: 0 0 0.25rem;
+        font-family: 'Tinos', serif;
+        font-size: 24px;
+        font-weight: 400;
+        color: #1e2a3a;
+      }
+
+      .t-page-subtitle {
+        margin: 0 0 1.75rem;
+        font-family: 'Tinos', serif;
+        font-size: 13px;
+        font-style: italic;
+        color: #8a96aa;
+      }
+
+      .t-section-heading {
+        margin: 0 0 0.5rem;
+        font-size: 10px;
+        font-weight: 500;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        color: #8a96aa;
+      }
+
+      .wdl-textarea {
+        width: 100%;
+        min-height: 8rem;
+        margin-bottom: 1.25rem;
+        padding: 0.75rem 1rem;
+        border: 0.5px solid #ccd0dc;
+        border-radius: 2px;
+        font-family: inherit;
+        font-size: 13px;
+        line-height: 1.55;
+      }
+
+      .wdl-size-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 1.25rem;
+      }
+
+      .wdl-btn-size {
+        min-width: 72px;
+        height: 34px;
+        padding: 0 12px;
+        border: 0.5px solid #ccd0dc;
+        border-radius: 2px;
+        background: #fff;
+        font-size: 12px;
+        font-weight: 500;
+        color: #3a4a6a;
+      }
+
+      .wdl-btn-size.is-selected {
+        border-color: #3a5298;
+        background: #eef1fa;
+        color: #1e2a3a;
+      }
+
+      .wdl-btn-primary {
+        min-height: 40px;
+        padding: 0 1.25rem;
+        border: none;
+        border-radius: 2px;
+        background: #3a5298;
+        color: #eef1fa;
+        font-size: 12px;
+        font-weight: 500;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+      }
+
+      .wdl-btn-primary:disabled {
+        opacity: 0.45;
+      }
+
+      .wdl-center {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+        padding: 2rem 1rem;
+      }
+
+      .wdl-spinner-lg {
+        width: 40px;
+        height: 40px;
+        border: 3px solid #dde1ec;
+        border-top-color: #3a5298;
+        border-radius: 50%;
+        animation: wdl-spin 0.9s linear infinite;
+      }
+
+      @keyframes wdl-spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      .wdl-loading-label {
+        margin: 0;
+        font-size: 12px;
+        color: #8a96aa;
+      }
+
+      .wdl-result-card {
+        padding: 1.25rem 1.5rem;
+        border: 0.5px solid #dde1ec;
+        border-radius: 2px;
+        background: #f8f9fc;
+        font-size: 14px;
+        line-height: 1.7;
+        color: #1e2a3a;
+      }
+
+      .wdl-error-banner {
+        background: #fdf0f0;
+        border: 0.5px solid #e0c8c8;
+        border-radius: 2px;
+        padding: 0.75rem 1rem;
+        margin-bottom: 1.25rem;
+        font-size: 12px;
+        color: #6a2020;
+        line-height: 1.6;
+      }
+
+      .wdl-error-banner em {
+        font-family: 'Tinos', serif;
+        font-style: italic;
+      }
+
+      .wdl-retry-btn {
+        min-height: 40px;
+        padding: 0 1.25rem;
+        border: none;
+        border-radius: 2px;
+        background: #3a5298;
+        color: #eef1fa;
+        font-size: 12px;
+        font-weight: 500;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wdl-catalog">
+      <div>
+        <p class="wdl-state-label">idle（入力・長さ選択・実行）</p>
+        <div class="wdl-page-frame">
+          <header class="t-header">
+            <div class="t-header-logo">
+              <span class="t-header-wordmark">Waddle</span>
+              <span class="t-header-tag">Tools</span>
+            </div>
+            <div class="t-header-actions">
+              <span>user@waddle-inc.com</span>
+            </div>
+          </header>
+          <div class="t-main">
+            <nav class="t-breadcrumb">
+              <a href="#">ツール一覧</a> › 文章要約
+            </nav>
+            <h1 class="t-page-title">文章要約</h1>
+            <p class="t-page-subtitle">
+              テキストを入力し、長さを選んでから要約を実行します（Gemini API）。
+            </p>
+            <p class="t-section-heading">要約するテキスト</p>
+            <textarea class="wdl-textarea" readonly>
+長いドキュメントのダミーです。実際の画面ではユーザーがここに入力します。</textarea
+            >
+            <p class="t-section-heading">要約の長さ</p>
+            <div class="wdl-size-row">
+              <button type="button" class="wdl-btn-size">短め</button>
+              <button type="button" class="wdl-btn-size is-selected">
+                普通
+              </button>
+              <button type="button" class="wdl-btn-size">詳しく</button>
+            </div>
+            <button type="button" class="wdl-btn-primary">要約を実行</button>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <p class="wdl-state-label">loading</p>
+        <div class="wdl-page-frame">
+          <header class="t-header">
+            <div class="t-header-logo">
+              <span class="t-header-wordmark">Waddle</span>
+              <span class="t-header-tag">Tools</span>
+            </div>
+            <div class="t-header-actions">
+              <span>user@waddle-inc.com</span>
+            </div>
+          </header>
+          <div class="t-main">
+            <nav class="t-breadcrumb">
+              <a href="#">ツール一覧</a> › 文章要約
+            </nav>
+            <h1 class="t-page-title">文章要約</h1>
+            <p class="t-section-heading">要約するテキスト</p>
+            <textarea class="wdl-textarea" disabled>
+（入力中は無効化）</textarea
+            >
+            <p class="t-section-heading">要約の長さ</p>
+            <div class="wdl-size-row">
+              <button type="button" class="wdl-btn-size" disabled>短め</button>
+              <button type="button" class="wdl-btn-size is-selected" disabled>
+                普通
+              </button>
+              <button type="button" class="wdl-btn-size" disabled>
+                詳しく
+              </button>
+            </div>
+            <button type="button" class="wdl-btn-primary" disabled>
+              要約を実行
+            </button>
+            <div class="wdl-center">
+              <div class="wdl-spinner-lg" aria-hidden="true"></div>
+              <p class="wdl-loading-label">要約を取得しています…</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <p class="wdl-state-label">done（結果表示）</p>
+        <div class="wdl-page-frame">
+          <header class="t-header">
+            <div class="t-header-logo">
+              <span class="t-header-wordmark">Waddle</span>
+              <span class="t-header-tag">Tools</span>
+            </div>
+            <div class="t-header-actions">
+              <span>user@waddle-inc.com</span>
+            </div>
+          </header>
+          <div class="t-main">
+            <nav class="t-breadcrumb">
+              <a href="#">ツール一覧</a> › 文章要約
+            </nav>
+            <h1 class="t-page-title">文章要約</h1>
+            <p class="t-section-heading">要約するテキスト</p>
+            <textarea class="wdl-textarea" readonly>（元テキスト）</textarea>
+            <p class="t-section-heading">要約の長さ</p>
+            <div class="wdl-size-row">
+              <button type="button" class="wdl-btn-size">短め</button>
+              <button type="button" class="wdl-btn-size is-selected">
+                普通
+              </button>
+              <button type="button" class="wdl-btn-size">詳しく</button>
+            </div>
+            <button type="button" class="wdl-btn-primary">要約を実行</button>
+            <div class="wdl-result-card">
+              ここに API
+              から返却された要約テキストが表示されます。複数行の場合もこのブロック内に収まります。
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <p class="wdl-state-label">error</p>
+        <div class="wdl-page-frame">
+          <header class="t-header">
+            <div class="t-header-logo">
+              <span class="t-header-wordmark">Waddle</span>
+              <span class="t-header-tag">Tools</span>
+            </div>
+            <div class="t-header-actions">
+              <span>user@waddle-inc.com</span>
+            </div>
+          </header>
+          <div class="t-main">
+            <nav class="t-breadcrumb">
+              <a href="#">ツール一覧</a> › 文章要約
+            </nav>
+            <h1 class="t-page-title">文章要約</h1>
+            <div class="wdl-error-banner">
+              <span aria-hidden="true">! </span>
+              <span><em>エラー —</em> API エラー（HTTP 502）</span>
+            </div>
+            <button type="button" class="wdl-retry-btn">閉じる</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

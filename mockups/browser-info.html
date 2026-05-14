@@ -1,0 +1,665 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Waddle Tools — ブラウザ情報（状態カタログ）</title>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&family=Tinos:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: 'DM Sans', sans-serif;
+        background: #f0f2f7;
+        padding: 2.5rem 1.5rem 3rem;
+        color: #1e2a3a;
+      }
+
+      /* ── 状態ラベル ── */
+      .wdl-state-label {
+        font-size: 11px;
+        font-weight: 500;
+        color: #8a96aa;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        text-align: center;
+        margin-bottom: 0.875rem;
+      }
+
+      /* ── カタログレイアウト ── */
+      .wdl-catalog {
+        display: flex;
+        flex-direction: column;
+        gap: 3rem;
+        max-width: 960px;
+        margin: 0 auto;
+      }
+
+      /* ── ページフレーム ── */
+      .wdl-page-frame {
+        background: #f8f9fc;
+        border: 0.5px solid #ccd0dc;
+        border-radius: 4px;
+        overflow: hidden;
+      }
+
+      /* ── ヘッダー ── */
+      .t-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0.875rem 2rem;
+        border-bottom: 0.5px solid #dde1ec;
+        background: #f8f9fc;
+      }
+      .t-header-logo {
+        display: flex;
+        align-items: baseline;
+        gap: 8px;
+      }
+      .t-header-logo img {
+        width: 26px;
+        height: 26px;
+        background: #e8ecf5;
+        border-radius: 50%;
+        padding: 3px;
+        align-self: center;
+      }
+      .t-header-wordmark {
+        font-family: 'Tinos', serif;
+        font-size: 22px;
+        font-style: italic;
+        font-weight: 400;
+        letter-spacing: -0.5px;
+        color: #1e2a3a;
+      }
+      .t-header-tag {
+        font-size: 10px;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        color: #8a96aa;
+      }
+      .t-header-actions {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      .t-header-user {
+        font-size: 12px;
+        color: #5a6a82;
+      }
+      .wdl-btn-logout {
+        height: 30px;
+        padding: 0 0.875rem;
+        background: transparent;
+        border: 0.5px solid #ccd0dc;
+        border-radius: 2px;
+        font-family: 'DM Sans', sans-serif;
+        font-size: 11px;
+        font-weight: 500;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        color: #5a6a82;
+        cursor: pointer;
+        transition:
+          background 0.15s,
+          border-color 0.15s;
+      }
+      .wdl-btn-logout:hover {
+        background: #edf0f8;
+        border-color: #b0b8cc;
+      }
+      .wdl-btn-logout:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+      }
+
+      /* ── メインコンテンツ ── */
+      .t-main {
+        padding: 1.75rem 2rem 2.25rem;
+        min-height: 220px;
+      }
+
+      /* ── パンくず ── */
+      .t-breadcrumb {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 11px;
+        color: #8a96aa;
+        letter-spacing: 0.5px;
+        margin-bottom: 1.25rem;
+      }
+      .t-breadcrumb a {
+        color: #3a5298;
+        text-decoration: none;
+      }
+      .t-breadcrumb a:hover {
+        text-decoration: underline;
+      }
+      .t-breadcrumb-sep {
+        color: #ccd0dc;
+      }
+
+      /* ── ページタイトル ── */
+      .t-page-title {
+        font-family: 'Tinos', serif;
+        font-size: 24px;
+        font-weight: 400;
+        letter-spacing: -0.5px;
+        color: #1e2a3a;
+        margin: 0 0 0.25rem;
+      }
+      .t-page-subtitle {
+        font-family: 'Tinos', serif;
+        font-size: 13px;
+        font-style: italic;
+        color: #8a96aa;
+        margin: 0 0 1.75rem;
+      }
+
+      /* ── セクション見出し ── */
+      .t-section-heading {
+        font-size: 10px;
+        font-weight: 500;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        color: #8a96aa;
+        border-bottom: 0.5px solid #dde1ec;
+        padding-bottom: 0.5rem;
+        margin: 1.5rem 0 0;
+      }
+
+      /* ── 情報テーブル ── */
+      .t-info-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 0.25rem;
+      }
+      .t-info-table tr {
+        border-bottom: 0.5px solid #edf0f8;
+      }
+      .t-info-table tr:last-child {
+        border-bottom: none;
+      }
+      .t-info-table th {
+        font-size: 11px;
+        font-weight: 500;
+        color: #5a6a82;
+        text-align: left;
+        padding: 0.625rem 1rem 0.625rem 0;
+        width: 220px;
+        vertical-align: top;
+        white-space: nowrap;
+      }
+      .t-info-table td {
+        font-size: 12px;
+        color: #1e2a3a;
+        padding: 0.625rem 0;
+        word-break: break-all;
+        line-height: 1.55;
+      }
+
+      /* ── バッジ ── */
+      .wdl-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        height: 20px;
+        padding: 0 7px;
+        border-radius: 2px;
+        font-size: 10px;
+        font-weight: 500;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+        vertical-align: middle;
+      }
+      .wdl-badge-success {
+        background: #e8f2ea;
+        color: #2a6030;
+      }
+      .wdl-badge-neutral {
+        background: #edf0f8;
+        color: #3a4a6a;
+      }
+      .wdl-badge-error {
+        background: #fdf0f0;
+        color: #8a2020;
+        border: 0.5px solid #e0c8c8;
+      }
+
+      /* ── ローディング ── */
+      .wdl-center {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 3.5rem 2rem;
+        gap: 1rem;
+      }
+      .wdl-spinner-lg {
+        width: 40px;
+        height: 40px;
+        border: 3px solid #dde1ec;
+        border-top-color: #3a5298;
+        border-radius: 50%;
+        animation: wdl-spin 0.9s linear infinite;
+      }
+      @keyframes wdl-spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+      .wdl-loading-label {
+        font-size: 12px;
+        color: #8a96aa;
+        letter-spacing: 0.5px;
+        margin: 0;
+      }
+
+      /* ── エラーバナー ── */
+      .wdl-error-banner {
+        background: #fdf0f0;
+        border: 0.5px solid #e0c8c8;
+        border-radius: 2px;
+        padding: 0.75rem 1rem;
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: flex-start;
+        gap: 8px;
+        font-size: 12px;
+        color: #6a2020;
+        line-height: 1.6;
+      }
+      .wdl-error-banner em {
+        font-family: 'Tinos', serif;
+        font-style: italic;
+      }
+
+      /* ── プライマリボタン ── */
+      .wdl-btn-primary {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        height: 40px;
+        padding: 0 1.5rem;
+        background: #3a5298;
+        color: #eef1fa;
+        border: none;
+        border-radius: 2px;
+        font-family: 'DM Sans', sans-serif;
+        font-size: 12px;
+        font-weight: 500;
+        cursor: pointer;
+        letter-spacing: 1.1px;
+        text-transform: uppercase;
+        text-decoration: none;
+        transition: background 0.15s;
+      }
+      .wdl-btn-primary:hover {
+        background: #2e4280;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wdl-catalog">
+      <!-- ═══════════════════════════ STATE 1: データ取得中（ローディング） ════════════════════════════ -->
+      <div>
+        <p class="wdl-state-label">データ取得中（ローディング）</p>
+        <div class="wdl-page-frame">
+          <header class="t-header">
+            <div class="t-header-logo">
+              <img src="company-logo.png" alt="" />
+              <span class="t-header-wordmark">Waddle</span>
+              <span class="t-header-tag">Tools</span>
+            </div>
+            <div class="t-header-actions">
+              <span class="t-header-user">user@waddle-inc.com</span>
+              <button class="wdl-btn-logout" disabled>ログアウト</button>
+            </div>
+          </header>
+          <div class="wdl-center">
+            <div class="wdl-spinner-lg"></div>
+            <p class="wdl-loading-label">ブラウザ情報を取得しています...</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════ STATE 2: 通常表示（データ取得成功） ════════════════════════════ -->
+      <div>
+        <p class="wdl-state-label">通常表示（データ取得成功）</p>
+        <div class="wdl-page-frame">
+          <header class="t-header">
+            <div class="t-header-logo">
+              <img src="company-logo.png" alt="" />
+              <span class="t-header-wordmark">Waddle</span>
+              <span class="t-header-tag">Tools</span>
+            </div>
+            <div class="t-header-actions">
+              <span class="t-header-user">user@waddle-inc.com</span>
+              <button class="wdl-btn-logout">ログアウト</button>
+            </div>
+          </header>
+          <div class="t-main">
+            <nav class="t-breadcrumb">
+              <a href="#">ツール一覧</a>
+              <span class="t-breadcrumb-sep">›</span>
+              <span>ブラウザ情報</span>
+            </nav>
+            <h1 class="t-page-title">ブラウザ情報</h1>
+            <p class="t-page-subtitle">
+              現在のブラウザと端末の環境情報を表示しています。
+            </p>
+
+            <p class="t-section-heading">ネットワーク</p>
+            <table class="t-info-table">
+              <tr>
+                <th>IP アドレス</th>
+                <td>203.0.113.42</td>
+              </tr>
+              <tr>
+                <th>オンライン状態</th>
+                <td>
+                  <span class="wdl-badge wdl-badge-success">オンライン</span>
+                </td>
+              </tr>
+              <tr>
+                <th>ネットワーク接続速度</th>
+                <td>4g</td>
+              </tr>
+              <tr>
+                <th>推定下り帯域</th>
+                <td>10 Mbps</td>
+              </tr>
+              <tr>
+                <th>往復遅延</th>
+                <td>50 ms</td>
+              </tr>
+              <tr>
+                <th>データセーバー</th>
+                <td><span class="wdl-badge wdl-badge-neutral">オフ</span></td>
+              </tr>
+            </table>
+
+            <p class="t-section-heading">ブラウザ</p>
+            <table class="t-info-table">
+              <tr>
+                <th>ユーザーエージェント</th>
+                <td>
+                  Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)
+                  AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0
+                  Safari/537.36
+                </td>
+              </tr>
+              <tr>
+                <th>言語設定</th>
+                <td>ja（ja, en-US, en）</td>
+              </tr>
+              <tr>
+                <th>プラットフォーム</th>
+                <td>MacIntel</td>
+              </tr>
+              <tr>
+                <th>ベンダー</th>
+                <td>Google Inc.</td>
+              </tr>
+              <tr>
+                <th>Cookie 有効</th>
+                <td><span class="wdl-badge wdl-badge-success">有効</span></td>
+              </tr>
+            </table>
+
+            <p class="t-section-heading">画面・ビューポート</p>
+            <table class="t-info-table">
+              <tr>
+                <th>画面解像度</th>
+                <td>2560 × 1600</td>
+              </tr>
+              <tr>
+                <th>利用可能画面サイズ</th>
+                <td>2560 × 1577</td>
+              </tr>
+              <tr>
+                <th>ビューポートサイズ</th>
+                <td>1440 × 900</td>
+              </tr>
+              <tr>
+                <th>画面の向き</th>
+                <td>landscape-primary</td>
+              </tr>
+              <tr>
+                <th>色深度</th>
+                <td>24 bit</td>
+              </tr>
+              <tr>
+                <th>デバイスピクセル比</th>
+                <td>2</td>
+              </tr>
+            </table>
+
+            <p class="t-section-heading">デバイス</p>
+            <table class="t-info-table">
+              <tr>
+                <th>タイムゾーン</th>
+                <td>Asia/Tokyo</td>
+              </tr>
+              <tr>
+                <th>CPU コア数</th>
+                <td>10</td>
+              </tr>
+              <tr>
+                <th>タッチポイント数</th>
+                <td>0</td>
+              </tr>
+              <tr>
+                <th>デバイスメモリ</th>
+                <td>8 GB</td>
+              </tr>
+            </table>
+
+            <p class="t-section-heading">ユーザー設定</p>
+            <table class="t-info-table">
+              <tr>
+                <th>カラースキーム</th>
+                <td><span class="wdl-badge wdl-badge-neutral">ライト</span></td>
+              </tr>
+              <tr>
+                <th>アニメーション軽減</th>
+                <td><span class="wdl-badge wdl-badge-neutral">オフ</span></td>
+              </tr>
+              <tr>
+                <th>ハイコントラスト</th>
+                <td><span class="wdl-badge wdl-badge-neutral">オフ</span></td>
+              </tr>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════ STATE 3: API 呼び出し失敗（IP 取得失敗） ════════════════════════════ -->
+      <div>
+        <p class="wdl-state-label">API 呼び出し失敗（IP 取得失敗）</p>
+        <div class="wdl-page-frame">
+          <header class="t-header">
+            <div class="t-header-logo">
+              <img src="company-logo.png" alt="" />
+              <span class="t-header-wordmark">Waddle</span>
+              <span class="t-header-tag">Tools</span>
+            </div>
+            <div class="t-header-actions">
+              <span class="t-header-user">user@waddle-inc.com</span>
+              <button class="wdl-btn-logout">ログアウト</button>
+            </div>
+          </header>
+          <div class="t-main">
+            <nav class="t-breadcrumb">
+              <a href="#">ツール一覧</a>
+              <span class="t-breadcrumb-sep">›</span>
+              <span>ブラウザ情報</span>
+            </nav>
+            <h1 class="t-page-title">ブラウザ情報</h1>
+            <p class="t-page-subtitle">
+              現在のブラウザと端末の環境情報を表示しています。
+            </p>
+
+            <div class="wdl-error-banner">
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 16 16"
+                fill="none"
+                style="flex-shrink: 0; margin-top: 1px"
+              >
+                <circle
+                  cx="8"
+                  cy="8"
+                  r="7"
+                  stroke="#a03030"
+                  stroke-width="1.2"
+                />
+                <path
+                  d="M8 5v4"
+                  stroke="#a03030"
+                  stroke-width="1.3"
+                  stroke-linecap="round"
+                />
+                <circle cx="8" cy="11" r="0.8" fill="#a03030" />
+              </svg>
+              <span
+                ><em>エラーが発生しました —</em> IP
+                アドレスの取得に失敗しました。その他の情報は表示されています。</span
+              >
+            </div>
+
+            <p class="t-section-heading">ネットワーク</p>
+            <table class="t-info-table">
+              <tr>
+                <th>IP アドレス</th>
+                <td><span class="wdl-badge wdl-badge-error">取得失敗</span></td>
+              </tr>
+              <tr>
+                <th>オンライン状態</th>
+                <td>
+                  <span class="wdl-badge wdl-badge-success">オンライン</span>
+                </td>
+              </tr>
+              <tr>
+                <th>ネットワーク接続速度</th>
+                <td>4g</td>
+              </tr>
+              <tr>
+                <th>推定下り帯域</th>
+                <td>10 Mbps</td>
+              </tr>
+              <tr>
+                <th>往復遅延</th>
+                <td>50 ms</td>
+              </tr>
+              <tr>
+                <th>データセーバー</th>
+                <td><span class="wdl-badge wdl-badge-neutral">オフ</span></td>
+              </tr>
+            </table>
+
+            <p class="t-section-heading">ブラウザ</p>
+            <table class="t-info-table">
+              <tr>
+                <th>ユーザーエージェント</th>
+                <td>
+                  Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)
+                  AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0
+                  Safari/537.36
+                </td>
+              </tr>
+              <tr>
+                <th>言語設定</th>
+                <td>ja（ja, en-US, en）</td>
+              </tr>
+              <tr>
+                <th>プラットフォーム</th>
+                <td>MacIntel</td>
+              </tr>
+              <tr>
+                <th>ベンダー</th>
+                <td>Google Inc.</td>
+              </tr>
+              <tr>
+                <th>Cookie 有効</th>
+                <td><span class="wdl-badge wdl-badge-success">有効</span></td>
+              </tr>
+            </table>
+
+            <p class="t-section-heading">画面・ビューポート</p>
+            <table class="t-info-table">
+              <tr>
+                <th>画面解像度</th>
+                <td>2560 × 1600</td>
+              </tr>
+              <tr>
+                <th>利用可能画面サイズ</th>
+                <td>2560 × 1577</td>
+              </tr>
+              <tr>
+                <th>ビューポートサイズ</th>
+                <td>1440 × 900</td>
+              </tr>
+              <tr>
+                <th>画面の向き</th>
+                <td>landscape-primary</td>
+              </tr>
+              <tr>
+                <th>色深度</th>
+                <td>24 bit</td>
+              </tr>
+              <tr>
+                <th>デバイスピクセル比</th>
+                <td>2</td>
+              </tr>
+            </table>
+
+            <p class="t-section-heading">デバイス</p>
+            <table class="t-info-table">
+              <tr>
+                <th>タイムゾーン</th>
+                <td>Asia/Tokyo</td>
+              </tr>
+              <tr>
+                <th>CPU コア数</th>
+                <td>10</td>
+              </tr>
+              <tr>
+                <th>タッチポイント数</th>
+                <td>0</td>
+              </tr>
+              <tr>
+                <th>デバイスメモリ</th>
+                <td>8 GB</td>
+              </tr>
+            </table>
+
+            <p class="t-section-heading">ユーザー設定</p>
+            <table class="t-info-table">
+              <tr>
+                <th>カラースキーム</th>
+                <td><span class="wdl-badge wdl-badge-neutral">ライト</span></td>
+              </tr>
+              <tr>
+                <th>アニメーション軽減</th>
+                <td><span class="wdl-badge wdl-badge-neutral">オフ</span></td>
+              </tr>
+              <tr>
+                <th>ハイコントラスト</th>
+                <td><span class="wdl-badge wdl-badge-neutral">オフ</span></td>
+              </tr>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
